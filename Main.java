@@ -38,7 +38,18 @@ public class Main
         	
         	ArrayList<Integer> theList1 = QuickSorter.generateRandomList(arrSize);
         	uns.print(theList1.toString());
-        	System.out.println(theList1.toString() + "  << unsorted array");
+        	//System.out.println(theList1.toString() + "  << unsorted array");
+        	
+        	
+        	/*
+        	 * 
+        	 * THE FOLLOWING LINES WERE USED DURING TESTING BUT ARE NOW INACTIVE
+        	 * 
+        	 */
+        	
+        	
+        	//ArrayList<Integer> theList1 = QuickSorter.generateSortedList(arrSize);
+        	//ArrayList<Integer> theList1 = QuickSorter.generateNearlySortedList(arrSize);
         		
         	report.print("Array Size = " + arrSize);
         	
@@ -56,10 +67,10 @@ public class Main
         	report.print("\nMEDIAN_OF_THREE_ELEMENTS : " + QuickSorter.timedQuickSort(theList4, QuickSorter.PivotStrategy.MEDIAN_OF_THREE_ELEMENTS)); 
         	
         	sor.print(theList4.toString()); //to test med of 3
-        	System.out.println(theList1.toString() + "  << sorted array via first elem");
-        	System.out.println(theList2.toString() + "  << sorted array via rand elem");
-        	System.out.println(theList3.toString() + "  << sorted array via med of 3 rand elems");
-        	System.out.println(theList4.toString() + "  << sorted array via med of 3 elems");
+        	//System.out.println(theList1.toString() + "  << sorted array via first elem");
+        	//System.out.println(theList2.toString() + "  << sorted array via rand elem");
+        	//System.out.println(theList3.toString() + "  << sorted array via med of 3 rand elems");
+        	//System.out.println(theList4.toString() + "  << sorted array via med of 3 elems");
         	
         	report.close();
         	uns.close();

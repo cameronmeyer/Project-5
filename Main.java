@@ -15,14 +15,6 @@ public class Main
             System.exit(0); 
         }
         
-        /* The first - array size
-         * The second - filename for the reports file
-         * The third - filename to store the unsorted array
-         * The fourth - filename to store sorted array. 
-         * The command line execution will look like the following:
-         * 		./Main_Class 100000 report.txt unsorted.txt sorted.txt
-         */
-        
         try
         {
         	int arrSize = Integer.parseInt(args[0]);
@@ -37,20 +29,17 @@ public class Main
         		PrintWriter sor = new PrintWriter(sor_arr);
         	
         	ArrayList<Integer> theList1 = QuickSorter.generateRandomList(arrSize);
-        	uns.print(theList1.toString());
-        	//System.out.println(theList1.toString() + "  << unsorted array");
-        	
         	
         	/*
-        	 * 
         	 * THE FOLLOWING LINES WERE USED DURING TESTING BUT ARE NOW INACTIVE
         	 * 
+        	 * 
+        	 * ArrayList<Integer> theList1 = QuickSorter.generateSortedList(arrSize);
+        	 * ArrayList<Integer> theList1 = QuickSorter.generateNearlySortedList(arrSize);
         	 */
+
+        	uns.print(theList1.toString());
         	
-        	
-        	//ArrayList<Integer> theList1 = QuickSorter.generateSortedList(arrSize);
-        	//ArrayList<Integer> theList1 = QuickSorter.generateNearlySortedList(arrSize);
-        		
         	report.print("Array Size = " + arrSize);
         	
         	ArrayList<Integer> theList2 = new ArrayList<Integer>();
@@ -66,11 +55,7 @@ public class Main
         	report.print("\nMEDIAN_OF_THREE_RANDOM_ELEMENTS : " + QuickSorter.timedQuickSort(theList3, QuickSorter.PivotStrategy.MEDIAN_OF_THREE_RANDOM_ELEMENTS)); 
         	report.print("\nMEDIAN_OF_THREE_ELEMENTS : " + QuickSorter.timedQuickSort(theList4, QuickSorter.PivotStrategy.MEDIAN_OF_THREE_ELEMENTS)); 
         	
-        	sor.print(theList4.toString()); //to test med of 3
-        	//System.out.println(theList1.toString() + "  << sorted array via first elem");
-        	//System.out.println(theList2.toString() + "  << sorted array via rand elem");
-        	//System.out.println(theList3.toString() + "  << sorted array via med of 3 rand elems");
-        	//System.out.println(theList4.toString() + "  << sorted array via med of 3 elems");
+        	sor.print(theList1.toString());
         	
         	report.close();
         	uns.close();

@@ -2,12 +2,12 @@
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Collections;
-import java.util.Comparator;
+//import java.util.Collections;
+//import java.util.Comparator;
 
 public class QuickSorter
 {
-	private static final int CUTOFF = 5;
+	private static final int CUTOFF = 20;
 	
     /*
      * This private constructor is optional, but it does help to prevent accidental client instantiation of QuickSorter
@@ -56,49 +56,11 @@ public class QuickSorter
         Random random = new Random();
         ArrayList<Integer> list = new ArrayList<Integer>();
 
-        // OPTION 1:  use the nextInt() method
         for (int i = 0; i < size; ++i)
         {
-            //int num = random.nextInt();
-        	int num = random.nextInt(501 + 500) - 500; //generating -5000 < x < 5000 for testing
-        	//int num = 0;
+            int num = random.nextInt();
             list.add(num);
-            //System.out.println(num);
         }
-        
-        //System.out.println(list.toString());
-        return list;
-    }
-    
-    public static ArrayList<Integer> generateSortedList(int size)
-    {
-        ArrayList<Integer> list = generateRandomList(size);
-        
-        System.out.println(list);
-        Collections.sort(list);
-        System.out.println(list);
-        
-        return list;
-    }
-    
-    public static ArrayList<Integer> generateNearlySortedList(int size)
-    {
-        ArrayList<Integer> list = generateSortedList(size);
-        
-        Random random = new Random();
-        int numElemsToSwap = size / 10;
-        
-        //System.out.println("\n\n\n" + list);
-        
-        for(int i = 0; i < numElemsToSwap / 2; i++) //numElemsToSwap / 2 since each swap takes 2 elements so we only need half this number
-        {
-        	int ind1 = random.nextInt(list.size() - 1); //choose index between 0 and size - 1
-        	int ind2 = random.nextInt(list.size() - 1); //choose index between 0 and size - 1
-        	
-        	swap(list, ind1, ind2);
-        }
-        
-        //System.out.println(list);
         
         return list;
     }
@@ -129,8 +91,6 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsFirstElem(ArrayList<E> list)
     {
-    	//System.out.println("/////////////////////////////////////////\nFIRST ELEMENT\n/////////////////////////////////////////");
-    	
     	qsFirstElem(list, 0, list.size() - 1);
     }
     
@@ -140,9 +100,6 @@ public class QuickSorter
         {
             E pivot = list.get(left);
             swap(list, left, right);
-            
-            //System.out.println(pivot.toString());
-            //System.out.println(list.toString() + "  << the list immediately after choosing pivot of " + pivot.toString());
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.FIRST_ELEMENT);
         }
@@ -152,8 +109,6 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsRandElem(ArrayList<E> list)
     {
-    	//System.out.println("/////////////////////////////////////////\nRANDOM ELEMENT\n/////////////////////////////////////////");
-    	
     	qsRandElem(list, 0, list.size() - 1);
     }
     
@@ -165,9 +120,6 @@ public class QuickSorter
         	int index = random.nextInt(right + 1 - left) + left;
             E pivot = list.get(index);
             swap(list, index, right);
-            
-            //System.out.println(pivot.toString());
-            //System.out.println(list.toString() + "  << the list immediately after choosing pivot of " + pivot.toString());
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.RANDOM_ELEMENT);
         }
@@ -177,8 +129,6 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsMedOfThreeRand(ArrayList<E> list)
     {
-    	//System.out.println("/////////////////////////////////////////\nMEDIAN OF THREE RANDOM\n/////////////////////////////////////////");
-    	
     	qsMedOfThreeRand(list, 0, list.size() - 1);
     }
     
@@ -186,55 +136,12 @@ public class QuickSorter
     {
     	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
         {
-            E pivot = medianOfThreeRand(list, left, right);
-            //System.out.println(pivot.toString());
-            //System.out.println(list.toString() + "  << the list immediately after choosing pivot");
+            E pivot = medianOfThreeRand(list, left, right);  //call pivot selection helper
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.MEDIAN_OF_THREE_RANDOM_ELEMENTS);
         }
         else  // Do an insertion sort on the subarray
             insertionSort(list, left, right);
-    }
-    
-    private static <E extends Comparable<E>> void qsMedOfThree(ArrayList<E> list)
-    {
-    	//System.out.println("/////////////////////////////////////////////\nMEDIAN OF THREE\n/////////////////////////////////////////////");
-    	
-    	qsMedOfThree(list, 0, list.size() - 1);
-    }
-    
-    private static <E extends Comparable<E>> void qsMedOfThree(ArrayList<E> list, int left, int right)
-    {
-    	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
-        {
-            E pivot = medianOfThree(list, left, right);
-            //System.out.println(pivot.toString());
-
-            quickSortHelper(list, left, right, pivot, PivotStrategy.MEDIAN_OF_THREE_ELEMENTS);
-        }
-        else  // Do an insertion sort on the subarray
-            insertionSort(list, left, right);
-    }
-    
-    private static <E extends Comparable<E>> E medianOfThree(ArrayList<E> list, int left, int right )
-    {
-    	int center = (left + right) / 2;
-    	
-    	//System.out.println("looking at " + list.get(left).toString() + ", " + list.get(center).toString() + ", " + list.get(right).toString());
-    	
-        if(list.get(center).compareTo(list.get(left)) < 0)
-            swap(list, left, center);
-        if(list.get(right).compareTo(list.get(left)) < 0)
-            swap(list, left, right);
-        if(list.get(right).compareTo(list.get(center)) < 0)
-            swap(list, center, right);
-
-        // Place pivot at position right
-        swap(list, center, right);
-        
-        //System.out.println(" - - " + list.toString() + "  << the list immediately after choosing a pivot of " + list.get(right-1));
-        
-        return list.get(right);
     }
     
     private static <E extends Comparable<E>> E medianOfThreeRand(ArrayList<E> list, int left, int right )
@@ -270,9 +177,7 @@ public class QuickSorter
     		ind2 = ind3;
     		ind3 = temp;
     	}
-    	
-    	//System.out.println("looking at " + list.get(ind1).toString() + ", " + list.get(ind2).toString() + ", " + list.get(ind3).toString());
-    	
+
     	//ind1 equiv to left, ind2 equiv to center, ind3 equiv to right
         if(list.get(ind2).compareTo(list.get(ind1)) < 0)
             swap(list, ind1, ind2);
@@ -281,9 +186,43 @@ public class QuickSorter
         if(list.get(ind3).compareTo(list.get(ind2)) < 0)
             swap(list, ind2, ind3);
 
-        // Place pivot at position right - 1
+        // Place pivot at position right
         swap(list, ind2, right);
         return list.get(right);  //find out whether right or right-1 is correct, why default to right-1??
+    }
+    
+    private static <E extends Comparable<E>> void qsMedOfThree(ArrayList<E> list)
+    {
+    	qsMedOfThree(list, 0, list.size() - 1);
+    }
+    
+    private static <E extends Comparable<E>> void qsMedOfThree(ArrayList<E> list, int left, int right)
+    {
+    	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
+        {
+            E pivot = medianOfThree(list, left, right); //call pivot selection helper
+
+            quickSortHelper(list, left, right, pivot, PivotStrategy.MEDIAN_OF_THREE_ELEMENTS);
+        }
+        else  // Do an insertion sort on the subarray
+            insertionSort(list, left, right);
+    }
+    
+    private static <E extends Comparable<E>> E medianOfThree(ArrayList<E> list, int left, int right )
+    {
+    	int center = (left + right) / 2;
+    	
+        if(list.get(center).compareTo(list.get(left)) < 0)
+            swap(list, left, center);
+        if(list.get(right).compareTo(list.get(left)) < 0)
+            swap(list, left, right);
+        if(list.get(right).compareTo(list.get(center)) < 0)
+            swap(list, center, right);
+
+        // Place pivot at position right
+        swap(list, center, right);
+
+        return list.get(right);
     }
     
     private static <E extends Comparable<E>> void swap(ArrayList<E> list, int ind1, int ind2)
@@ -322,8 +261,6 @@ public class QuickSorter
 
         swap(list, i, right);   // Restore pivot
         
-        //System.out.println(list.toString() + "  << list after doing some swaps around the pivot of " + pivot.toString());
-        
         switch(strategy)
     	{
     	case FIRST_ELEMENT:
@@ -346,4 +283,36 @@ public class QuickSorter
     		System.out.println("Not a valid pivot strategy.");
     	}
     }
+    
+    /*
+    
+    THE FOLLOWING TWO FUNCTIONS WERE USED DURING TESTING BUT ARE NOW INACTIVE 
+     
+    public static ArrayList<Integer> generateSortedList(int size)
+    {
+        ArrayList<Integer> list = generateRandomList(size);
+
+        Collections.sort(list);
+        
+        return list;
+    }
+    
+    public static ArrayList<Integer> generateNearlySortedList(int size)
+    {
+        ArrayList<Integer> list = generateSortedList(size);
+        
+        Random random = new Random();
+        int numElemsToSwap = size / 10;
+        
+        for(int i = 0; i < numElemsToSwap / 2; i++) //numElemsToSwap / 2 since each swap takes 2 elements so we only need half this number
+        {
+        	int ind1 = random.nextInt(list.size() - 1); //choose index between 0 and size - 1
+        	int ind2 = random.nextInt(list.size() - 1); //choose index between 0 and size - 1
+        	
+        	swap(list, ind1, ind2);
+        }
+        
+        return list;
+    }
+    */
 }

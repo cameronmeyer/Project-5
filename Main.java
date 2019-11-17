@@ -3,11 +3,29 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+/*
+ * <h1>Main</h1>
+ * This program generates a randomly sorted ArrayList and performs a quicksort
+ * on it using various pivot selection strategies. 
+ * <p> 
+ * 
+ * @author Cameron Meyer
+ * @since 11/17/2019
+ */
 public class Main
 {
+	/*
+	 * This method generates a randomly sorted ArrayList and duplicates it
+	 * repeatedly so quicksort can be performed on each using a different
+	 * pivot selection strategy each time. 
+	 * @param arraySize This is the size of the generated ArrayList
+	 * @param reportFileName This is the name of the file that will be created for report output
+	 * @param unsortedFileName This is the name of the file created for output of the unsorted list
+	 * @param sortedFileName This is the name of the file created for output of the sorted list
+	 */
 	public static void main(String [] args)
 	{
-		// Check that the arguments are correct
+		//check that the arguments are correct
         if (args.length != 4)
         {
             System.out.print("Error Incorrect Arguments: " + Arrays.toString(args));
@@ -60,6 +78,9 @@ public class Main
         	uns.close();
         	sor.close();
         }
-        catch(Exception e) {System.out.println(e.getMessage());}
+        catch(Exception e)
+        {
+        	System.out.println(e.getMessage());
+        }
 	}
 }

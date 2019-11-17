@@ -1,61 +1,98 @@
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Random;
 //import java.util.Collections;
 //import java.util.Comparator;
 
+/*
+ * <h1>QuickSorter</h1>
+ * This program is equipped with functions to generate and sort ArrayLists with quicksort
+ * and various pivot selection strategies.
+ * <p> 
+ * 
+ * @author Cameron Meyer
+ * @since 11/17/2019
+ */
 public class QuickSorter
 {
 	private static final int CUTOFF = 20;
 	
-    /*
-     * This private constructor is optional, but it does help to prevent accidental client instantiation of QuickSorter
-     * via the default constructor.  (defining any constructor prevents the compiler from creating a default constructor)
-     * This particular anti-instantiation technique is exactly what {@link java.util.Collections} does.
-     */
     private QuickSorter() {}
+    
+    /*
+     * This is an enum to contain each pivot strategy
+     */
+    public static enum PivotStrategy
+    {
+        FIRST_ELEMENT,
+        RANDOM_ELEMENT,
+        MEDIAN_OF_THREE_RANDOM_ELEMENTS,
+        MEDIAN_OF_THREE_ELEMENTS
+    }
 
+    /*
+     * This method accepts a list and pivot strategy, then performs the proper
+     * quicksort to the list and times how long it takes to complete. 
+     * @param list This is the ArrayList to be sorted
+     * @param strategy This is the pivot strategy to use during the quicksort
+     * @return Duration This is how long the program took to complete the quicksort
+     */
     public static <E extends Comparable<E>> Duration timedQuickSort(ArrayList<E> list, PivotStrategy strategy)
     {
-    	long startTime = System.nanoTime();
-
-    	switch(strategy)
+    	if(list == null || strategy == null)
     	{
-    	case FIRST_ELEMENT:
-    		qsFirstElem(list);
-    		break;
-    	case RANDOM_ELEMENT:
-    		qsRandElem(list);
-    		break;
-    	case MEDIAN_OF_THREE_RANDOM_ELEMENTS:
-    		qsMedOfThreeRand(list);
-    		break;
-    	case MEDIAN_OF_THREE_ELEMENTS:
-    		qsMedOfThree(list);
-    		break;
-    	default:
-    		System.out.println("Not a valid pivot strategy.");
+    		throw new NullPointerException();
+    	}
+    	
+    	long startTime = System.nanoTime(); //start duration timer
+
+    	if(list.size() > 1) //only non-empty lists with more than 1 element need to be sorted
+    	{
+	    	switch(strategy) //perform a quicksort using the intended pivot selection strategy
+	    	{
+	    	case FIRST_ELEMENT:
+	    		qsFirstElem(list);
+	    		break;
+	    	case RANDOM_ELEMENT:
+	    		qsRandElem(list);
+	    		break;
+	    	case MEDIAN_OF_THREE_RANDOM_ELEMENTS:
+	    		qsMedOfThreeRand(list);
+	    		break;
+	    	case MEDIAN_OF_THREE_ELEMENTS:
+	    		qsMedOfThree(list);
+	    		break;
+	    	default:
+	    		System.out.println("Not a valid pivot strategy.");
+	    	}
     	}
 
         return tsqHelper(startTime);
     }
     
-    public static <E extends Comparable<E>> Duration tsqHelper(long startTime)
+    private static <E extends Comparable<E>> Duration tsqHelper(long startTime)
     {
-    	long finishTime = System.nanoTime();
-        Duration elapsedTime = Duration.ofNanos(finishTime - startTime);
+    	long finishTime = System.nanoTime(); //end duration timer
+        Duration elapsedTime = Duration.ofNanos(finishTime - startTime); //calculate elapsed time
     	return elapsedTime;
     }
 
+    /*
+     * This method generates a random ArrayList of a given size
+     * @param size This is the intended size for the ArrayList
+     * @return ArrayList This is the generated random ArrayList
+     */
     public static ArrayList<Integer> generateRandomList(int size)
     {
-    	/* According to the JavaDoc, the no-args constructor of Random "sets the seed of the random number generator to
-         * a value very likely to be distinct from any other invocation of this constructor."
-         */
+    	if(size < 0) //size of the list must be nonnegative
+    	{
+    		throw new IllegalArgumentException();
+    	}
+    	
         Random random = new Random();
         ArrayList<Integer> list = new ArrayList<Integer>();
 
+        //add random values to list
         for (int i = 0; i < size; ++i)
         {
             int num = random.nextInt();
@@ -63,30 +100,6 @@ public class QuickSorter
         }
         
         return list;
-    }
-
-    /**
-	* Generates a pseudo-random integer in the range [min, max]
-	* @param min : the starting value of the range (inclusive)
-	* @param max : the ending value of the range (inclusive)
-    * @return 
-	*/
-    public static int rand(int min, int max)
-	{
-		if (min > max || (max - min + 1 > Integer.MAX_VALUE))
-		{
-			throw new IllegalArgumentException("Invalid range");
-		}
-
-		return new Random().nextInt(max - min + 1) + min;
-	}
-
-    public static enum PivotStrategy
-    {
-        FIRST_ELEMENT,
-        RANDOM_ELEMENT,
-        MEDIAN_OF_THREE_RANDOM_ELEMENTS,
-        MEDIAN_OF_THREE_ELEMENTS
     }
     
     private static <E extends Comparable<E>> void qsFirstElem(ArrayList<E> list)
@@ -96,15 +109,21 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsFirstElem(ArrayList<E> list, int left, int right)
     {
-    	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
+    	if(left + CUTOFF <= right) //only perform quicksort if we have a sufficient number of elements
         {
+    		//first element will be the pivot
             E pivot = list.get(left);
+            
+            //place pivot at position right
             swap(list, left, right);
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.FIRST_ELEMENT);
         }
-        else  // Do an insertion sort on the subarray
+        else
+        {
+        	//do an insertion sort on the subarray
             insertionSort(list, left, right);
+        }
     }
     
     private static <E extends Comparable<E>> void qsRandElem(ArrayList<E> list)
@@ -114,17 +133,23 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsRandElem(ArrayList<E> list, int left, int right)
     {
-    	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
+    	if(left + CUTOFF <= right) //only perform quicksort if we have a sufficient number of elements
         {
+    		//random element will be the pivot
     		Random random = new Random();
         	int index = random.nextInt(right + 1 - left) + left;
             E pivot = list.get(index);
+            
+            //place pivot at position right
             swap(list, index, right);
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.RANDOM_ELEMENT);
         }
-        else  // Do an insertion sort on the subarray
+        else
+        {
+        	//do an insertion sort on the subarray
             insertionSort(list, left, right);
+        }
     }
     
     private static <E extends Comparable<E>> void qsMedOfThreeRand(ArrayList<E> list)
@@ -134,19 +159,22 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsMedOfThreeRand(ArrayList<E> list, int left, int right)
     {
-    	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
+    	if(left + CUTOFF <= right) //only perform quicksort if we have a sufficient number of elements
         {
             E pivot = medianOfThreeRand(list, left, right);  //call pivot selection helper
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.MEDIAN_OF_THREE_RANDOM_ELEMENTS);
         }
-        else  // Do an insertion sort on the subarray
+        else
+        {
+        	//do an insertion sort on the subarray
             insertionSort(list, left, right);
+        }
     }
     
     private static <E extends Comparable<E>> E medianOfThreeRand(ArrayList<E> list, int left, int right )
     {
-    	//generate 3 random indices
+    	//generate 3 random indices within range of the list
     	Random random = new Random();
     	int ind1 = random.nextInt(right + 1 - left) + left;
     	int ind2 = random.nextInt(right + 1 - left) + left;
@@ -154,11 +182,16 @@ public class QuickSorter
     	
     	//make sure all indices are unique
     	while(ind2 == ind1)
+    	{
     		ind2 = random.nextInt(right + 1 - left) + left;
+    	}
     	
     	while(ind3 == ind1 || ind3 == ind2)
+    	{
     		ind3 = random.nextInt(right + 1 - left) + left;
-
+    	}
+    	
+    	//ind1 should hold the leftmost index, ind2 holds the middle, and ind3 will hold the rightmost index
     	if(ind1 > ind2)
     	{
     		int temp = ind1;
@@ -178,17 +211,24 @@ public class QuickSorter
     		ind3 = temp;
     	}
 
-    	//ind1 equiv to left, ind2 equiv to center, ind3 equiv to right
+    	//swap indices so values are ordered least to greatest (similar to code from median of 3)
         if(list.get(ind2).compareTo(list.get(ind1)) < 0)
+        {
             swap(list, ind1, ind2);
+        }
         if(list.get(ind3).compareTo(list.get(ind1)) < 0)
+        {
             swap(list, ind1, ind3);
+        }
         if(list.get(ind3).compareTo(list.get(ind2)) < 0)
+        {
             swap(list, ind2, ind3);
+        }
 
-        // Place pivot at position right
+        //place pivot at position right
         swap(list, ind2, right);
-        return list.get(right);  //find out whether right or right-1 is correct, why default to right-1??
+        
+        return list.get(right);
     }
     
     private static <E extends Comparable<E>> void qsMedOfThree(ArrayList<E> list)
@@ -198,20 +238,25 @@ public class QuickSorter
     
     private static <E extends Comparable<E>> void qsMedOfThree(ArrayList<E> list, int left, int right)
     {
-    	if(left + CUTOFF <= right) //example used "cutoff" I hardcoded to 3 since we need at least 3 indices(?)
+    	if(left + CUTOFF <= right) //only perform quicksort if we have a sufficient number of elements
         {
             E pivot = medianOfThree(list, left, right); //call pivot selection helper
 
             quickSortHelper(list, left, right, pivot, PivotStrategy.MEDIAN_OF_THREE_ELEMENTS);
         }
-        else  // Do an insertion sort on the subarray
+        else
+        {
+        	//do an insertion sort on the subarray
             insertionSort(list, left, right);
+        }
     }
     
     private static <E extends Comparable<E>> E medianOfThree(ArrayList<E> list, int left, int right )
     {
+    	//find the index at the center of the array range
     	int center = (left + right) / 2;
     	
+    	//swap indices so values are ordered least to greatest
         if(list.get(center).compareTo(list.get(left)) < 0)
             swap(list, left, center);
         if(list.get(right).compareTo(list.get(left)) < 0)
@@ -219,7 +264,7 @@ public class QuickSorter
         if(list.get(right).compareTo(list.get(center)) < 0)
             swap(list, center, right);
 
-        // Place pivot at position right
+        //place pivot at position right
         swap(list, center, right);
 
         return list.get(right);
@@ -240,44 +285,53 @@ public class QuickSorter
             int j;
 
             for(j = p; j > left && tmp.compareTo(list.get(j - 1)) < 0; j--)
+            {
                 list.set(j, list.get(j - 1));
+            }
+            
             list.set(j, tmp);
         }
     }
     
     private static <E extends Comparable<E>> void quickSortHelper(ArrayList<E> list, int left, int right, E pivot, PivotStrategy strategy)
     {
-    	 // Begin partitioning
+    	//begin partitioning
         int i = left - 1, j = right;
+        
         while(true)
         {
             while(list.get(++i).compareTo(pivot) < 0 && i < right) {}
             while(list.get(--j).compareTo(pivot) > 0 && j > 0) {}
+            
             if(i < j)
+            {
                 swap(list, i, j);
+            }
             else
+            {
                 break;
+            }
         }
 
-        swap(list, i, right);   // Restore pivot
+        swap(list, i, right); //restore pivot to intended location
         
         switch(strategy)
     	{
     	case FIRST_ELEMENT:
-    		qsFirstElem(list, left, i - 1);    // Sort small elements
-            qsFirstElem(list, i + 1, right);   // Sort large elements
+    		qsFirstElem(list, left, i - 1);    //sort small elements
+            qsFirstElem(list, i + 1, right);   //sort large elements
     		break;
     	case RANDOM_ELEMENT:
-    		qsRandElem(list, left, i - 1);    // Sort small elements
-            qsRandElem(list, i + 1, right);   // Sort large elements
+    		qsRandElem(list, left, i - 1);     //sort small elements
+            qsRandElem(list, i + 1, right);    //sort large elements
     		break;
     	case MEDIAN_OF_THREE_RANDOM_ELEMENTS:
-    		qsMedOfThreeRand(list, left, i - 1);    // Sort small elements
-            qsMedOfThreeRand(list, i + 1, right);   // Sort large elements
+    		qsMedOfThreeRand(list, left, i - 1);    //sort small elements
+            qsMedOfThreeRand(list, i + 1, right);   //sort large elements
     		break;
     	case MEDIAN_OF_THREE_ELEMENTS:
-    		qsMedOfThree(list, left, i - 1);    // Sort small elements
-            qsMedOfThree(list, i + 1, right);   // Sort large elements
+    		qsMedOfThree(list, left, i - 1);    //sort small elements
+            qsMedOfThree(list, i + 1, right);   //sort large elements
     		break;
     	default:
     		System.out.println("Not a valid pivot strategy.");

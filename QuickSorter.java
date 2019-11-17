@@ -174,24 +174,7 @@ public class QuickSorter
             E pivot = medianOfThree(list, left, right);
             System.out.println(pivot.toString());
 
-            // Begin partitioning
-            int i = left, j = right - 1;
-            while(true)
-            {
-                while(list.get(++i).compareTo(pivot) < 0 ) {}
-                while(list.get(--j).compareTo(pivot) > 0 ) {}
-                if(i < j)
-                    swap(list, i, j);
-                else
-                    break;
-            }
-
-            swap(list, i, right - 1 );   // Restore pivot
-            
-            System.out.println(list.toString());
-
-            qsMedOfThree(list, left, i - 1 );    // Sort small elements
-            qsMedOfThree(list, i + 1, right );   // Sort large elements
+            quickSortHelper(list, left, right, pivot, PivotStrategy.MEDIAN_OF_THREE_ELEMENTS);
         }
         else  // Do an insertion sort on the subarray
             insertionSort(list, left, right);
@@ -293,8 +276,8 @@ public class QuickSorter
         int i = left - 1, j = right;
         while(true)
         {
-            while(list.get(++i).compareTo(pivot) < 0 && i < right + 1) {}
-            while(list.get(--j).compareTo(pivot) > 0 && j > -1) {}
+            while(list.get(++i).compareTo(pivot) < 0 && i < right) {}
+            while(list.get(--j).compareTo(pivot) > 0 && j > 0) {}
             if(i < j)
                 swap(list, i, j);
             else
